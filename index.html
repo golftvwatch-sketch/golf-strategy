@@ -33,7 +33,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%;} body{min-width:0;over
 <main>
 <p class="note">クラブ記録はこの端末のブラウザ内に保存します。保存が使えないプレビュー環境では、ページを閉じると記録が消える場合があります。</p>
 <div class="card"><div class="section">ホールを選ぶ（黄色ライン＝記録あり）</div><div class="holes" id="holes"></div><div class="top"><h2 id="title">1番ホール</h2><span class="pill" id="par">Par 4</span></div><div class="yard" id="yard"></div><div class="lead" id="lead"></div><div class="section">おすすめ攻略プラン</div><div id="plan"></div><div class="section">実際に使ったクラブを記録</div><div id="records"></div><div class="btnrow"><button class="btn alt" id="prev">← 前のホール</button><button class="btn" id="next">次のホール →</button></div></div>
-<div class="card"><div class="section">記録一覧</div><div class="tablewrap"><table id="review"></table></div><div class="btnrow"><button class="btn alt" id="export">記録をコピー</button><button class="btn warn" id="reset">記録をリセット</button></div><p class="note" id="feedback">各ホールのクラブ記録を入れると、ここに振り返りが出ます。</p></div>
+<div class="card"><div class="section">現在のスコア</div><div class="summary" id="totals"></div><div class="section">記録一覧</div><div class="tablewrap"><table id="review"></table></div><div class="btnrow"><button class="btn alt" id="export">記録をコピー</button><button class="btn" id="savefile">データを保存</button><button class="btn alt" id="loadfile">保存データを読み込む</button><input id="fileinput" type="file" accept=".json,application/json" hidden><button class="btn warn" id="reset">記録をリセット</button></div><p class="note" id="feedback">各ホールで使ったクラブを記録できます。18番まで入力すると、保存用データを書き出せます。</p><p class="note" id="savehint"></p></div>
 <p class="note">※戦略は共有された飛距離とヤーデージに基づく暫定案。ハザード位置、当日のティー位置、風、ピン位置は反映していません。現地のコース図と安全な狙い所を優先してください。</p>
 </main><footer>クラブ選択数からスコアを自動計算</footer>
 <script>
@@ -63,71 +63,93 @@ const $=id=>document.getElementById(id);
 function load(){try{const d=localStorage.getItem("sennanClubLogs");if(d){const saved=JSON.parse(d);logs=Array.from({length:18},(_,i)=>{const a=Array.isArray(saved[i])?saved[i]:[];return Array.from({length:Math.max(5,a.length)},(_,j)=>a[j]||{club:""})})}}catch(e){}}
 function save(){try{localStorage.setItem("sennanClubLogs",JSON.stringify(logs))}catch(e){}}
 function planText(h,i){
- const y=h[0],par=h[1];
- const fmt=n=>Math.max(0,Math.round(n));
- const clubY=Object.fromEntries(distances);
- const selectAtMost=(target, min=0)=>{
-   // Choose the longest known club that does not exceed target; avoid recommending a putter off the green.
-   const options=distances.filter(c=>c[1]<=target && c[1]>=min).sort((a,b)=>b[1]-a[1]);
-   return options[0] || [...distances].sort((a,b)=>Math.abs(a[1]-target)-Math.abs(b[1]-target))[0];
+ const y=h[0],par=h[1],fmt=n=>Math.max(0,Math.round(n));
+ const nonDriver=distances.filter(c=>c[0]!=="ドライバー");
+ const closest=(target,clubs=nonDriver)=>[...clubs].sort((a,b)=>Math.abs(a[1]-target)-Math.abs(b[1]-target))[0];
+ const layup=(remaining,targetLeave=50)=>{
+   const target=remaining-targetLeave;
+   const opts=nonDriver.filter(c=>c[1]<remaining && c[1]>=55);
+   return opts.sort((a,b)=>Math.abs((remaining-a[1])-targetLeave)-Math.abs((remaining-b[1])-targetLeave))[0] || closest(target);
  };
  const arr=[];
  if(par===3){
-   // Pick closest club to the tee distance, but explicitly flag the 170/179/116 yard differences.
-   const c=[...distances].sort((a,b)=>Math.abs(a[1]-y)-Math.abs(b[1]-y))[0];
-   const diff=y-c[1];
-   arr.push([`1打目｜${c[0]}・${c[1]}yd`, `白ティー表示 ${y}yd。登録飛距離との差は約${diff>=0?diff:0}yd。${diff>12?'このクラブでは届かない可能性があるため、風・打ち上げ・当日の距離を確認して1〜2番手上も検討。':'距離は目安。風・高低差・ライを見て番手を調整し、ピンよりグリーン中央を狙う。'}`]);
-   arr.push(["外した場合｜ウェッジ", "実際のボール位置からグリーンまでの距離を測り、PW・48°・52°・56°から選ぶ。" ]);
-   arr.push(["グリーン上｜パター", "グリーンに乗ったらパター。距離感を優先して3パットを避ける。"]);
-   if(i===4) arr[0][1]+=" 5番はFront 170ydなので、登録距離だけでは届かない想定。無理せず手前からでも安全に。";
-   if(i===16) arr[0][1]+=" 17番は池越え。公式案内は1クラブ大きめを推奨。池を越える番手が不確かな場合は安全優先。";
-   if(i===13) arr[0][1]+=" 14番は打ち上げ・手前バンカーの案内あり。1クラブ大きめを検討し、手前バンカーに注意。";
-   return arr;
- }
- // Do not assume a driver is always safe; it is the user's default tee club, with a course-safety caveat.
- const tee=Math.min(188,y);
- let rem=y-tee;
- arr.push([`1打目｜ドライバー・${tee}yd目安`, `白ティー ${y}yd。登録総距離188ydを基準にした単純計算で残り約${fmt(rem)}yd。公式案内・当日のハザードを確認し、狭い/危険なら安全なクラブに変更。`]);
- if(par===5){
-   // Use a controlled layup when the remaining distance is long, aiming to leave ~80-100 yd where possible.
-   let target=Math.max(0,rem-90);
-   let c=selectAtMost(target, 55);
-   if(rem<=100){ c=selectAtMost(rem); }
-   let after=Math.max(0,rem-c[1]);
-   arr.push([`2打目｜${c[0]}・${c[1]}yd目安`, `単純計算の残り約${fmt(rem)}yd。${rem>200?'無理な2オンは狙わず、次に打ちやすい場所へ刻む。':'残り距離とライを確認して前進。'} このクラブで打った場合の計算上の残りは約${fmt(after)}yd。`]);
-   rem=after;
-   if(rem>0){
-     let c2=selectAtMost(rem);
-     let after2=Math.max(0,rem-c2[1]);
-     arr.push([`3打目｜${c2[0]}・${c2[1]}yd目安`, `計算上の残り約${fmt(rem)}yd。実際の残りとライを確認して選択。打った後の計算上の残りは約${fmt(after2)}yd。`]);
-   }
-   arr.push(["次打｜ウェッジ／パター", "実際の残り距離に合わせてウェッジでグリーンへ。グリーン上はパター。距離計算は目安で、実際のショット距離は毎回変わるよ。"]);
+   const c=closest(y,distances), diff=y-c[1];
+   arr.push([`1打目｜${c[0]}・${c[1]}yd目安`,`表示距離 ${y}yd。登録飛距離との差は約${fmt(diff)}yd。風や高低差を確認し、無理せずグリーン中央を狙う。`]);
+   arr.push(["外した場合｜アプローチ","実際の残り距離とライを確認。グリーン周りでは転がしも使い、寄せワンを狙う。"]);
+   arr.push(["グリーン上｜パター","距離感優先で3パットを避ける。"]);
  }else{
-   // For par 4, favor a layup to a known wedge yardage instead of blindly choosing the longest club.
-   let c;
-   if(rem>150) c=selectAtMost(rem-80, 55); // leave roughly 80 yd when possible
-   else c=selectAtMost(rem);
-   let after=Math.max(0,rem-c[1]);
-   arr.push([`2打目｜${c[0]}・${c[1]}yd目安`, `ドライバー後の計算上の残り約${fmt(rem)}yd。${rem>150?'無理にグリーンを狙わず、得意なウェッジ距離を残す選択。':'残り距離に合わせてグリーンを狙う。'}このクラブで打った場合の計算上の残りは約${fmt(after)}yd。実際の残りとライを優先。`]);
-   arr.push([`次打｜残り約${fmt(after)}yd（計算上）`, `実際の距離を測り、PW（100yd）・48°（80yd）・52°（65yd）・56°（55yd）から選ぶ。グリーン上はパター。`]);
+   const tee=188, rem=Math.max(0,y-tee);
+   arr.push([`1打目｜ドライバー・${tee}yd目安`,`表示距離 ${y}yd。単純計算では残り約${fmt(rem)}yd。狭い場所やハザードがあれば安全なクラブに変更。`]);
+   let remaining=rem, shot=2;
+   while(remaining>105 && shot<5){
+     const c=layup(remaining,50);
+     const after=Math.max(0,remaining-c[1]);
+     arr.push([`${shot}打目｜${c[0]}・${c[1]}yd目安`,`ドライバー以外で刻み、次のアプローチを約50yd残す想定。計算上の残りは約${fmt(after)}yd。実際の距離・ライ・ハザードを優先。`]);
+     remaining=after; shot++;
+   }
+   if(remaining>0){
+     arr.push([`アプローチ｜残り約${fmt(remaining)}yd（計算上）`,`目標は50yd前後。実際の距離を測り、PW（100yd）・48°（80yd）・52°（65yd）・56°（55yd）を振り幅で調整。無理にフルショットせず、グリーン中央の安全な場所へ。`]);
+   }
+   arr.push(["グリーン上｜パター","最初のパットは距離感を優先。次を打ちやすい場所に止めて3パットを避ける。"]);
  }
- if(i===0) arr[0][1]+=" 1番は公式案内でフェアウェイが広く、セカンドは打ち上げ。ティーショット後は打ち上げ分も考慮。";
- if(i===1) arr[0][1]+=" 2番は公式案内で右OBに注意。正面の目標よりやや左狙いとされるので、右へのミスを避ける。";
- if(i===8) arr[1][1]+=" 9番はセカンド地点の左右バンカーとグリーン左のOBに注意。";
- if(i===10) arr[0][1]+=" 11番はティーショット左右OBの案内あり。安全優先。";
- if(i===11) arr[0][1]+=" 12番は短いパー4だが、ワンオン狙いは前組の安全確認とハザード確認が必須。基本はフェアウェイキープ。";
- if(i===12) arr[0][1]+=" 13番は公式案内で右の山裾狙い、グリーン左奥のOBに注意。";
- if(i===15) arr[0][1]+=" 16番は左のレッドペナルティエリア・右OB。ティーショットは慎重に。";
- if(i===17) arr[0][1]+=" 18番は最後でも振り回さず、方向性優先。";
+ const tips={
+  0:"1番はセカンドが打ち上げの案内あり。残り距離に高さ分を加味。",
+  1:"2番は右OBに注意。安全を優先してやや左側を狙う。",
+  8:"9番はセカンド地点の左右バンカーとグリーン左OBに注意。",
+  10:"11番はティーショット左右OBに注意。",
+  11:"12番は短いパー4。ワンオン狙いよりフェアウェイキープを基本に。",
+  12:"13番は右の山裾狙いの案内あり。グリーン左奥OBに注意。",
+  13:"14番は打ち上げと手前バンカーに注意。1クラブ大きめも検討。",
+  15:"16番は左のレッドペナルティエリア・右OBに注意。",
+  16:"17番は池越え。池を越える番手に確信がなければ安全優先。",
+  17:"18番は最終ホール。スコアを意識しすぎず方向性優先。"
+ };
+ if(tips[i]) arr[0][1]+=" "+tips[i];
  return arr;
 }
 function score(i){return logs[i].filter(r=>r.club).length}
 function scoreLabel(i){const diff=score(i)-holes[i][1];if(score(i)===0)return "—";if(diff===0)return "Par";if(diff<0)return (diff===-1?"Birdie":diff===-2?"Eagle":(diff)+"打");return "+"+diff}
 function render(){let h=holes[cur];$("title").textContent=(cur+1)+"番ホール";$("par").textContent="Par "+h[1];$("yard").textContent=h[0]+"ヤード";$("lead").textContent=h[2];$("plan").innerHTML=planText(h,cur).map((x,i)=>`<div class="planrow"><div class="num">${i+1}</div><div><b>${x[0]}</b><p>${x[1]}</p></div></div>`).join("");$("holes").innerHTML=holes.map((x,i)=>`<button class="hole ${i===cur?'active':''} ${logs[i].some(r=>r.club)?'logged':''}" data-i="${i}"><span>${i+1}</span><small>${score(i)?score(i)+"打 · "+scoreLabel(i):"Par "+x[1]}</small></button>`).join("");document.querySelectorAll(".hole").forEach(b=>b.onclick=()=>{cur=+b.dataset.i;render()});renderRecords();renderReview()}
 function renderRecords(){let arr=logs[cur];let content=arr.map((r,i)=>`<div class="record"><div class="recordhead"><b>${i+1}打目</b></div><div class="clubs">${names.map(n=>`<button class="club ${r.club===n?'selected':''}" data-shot="${i}" data-club="${n}">${n}</button>`).join("")}<button class="club" data-delete="${i}">この打を削除</button></div></div>`).join("");const addButton=score(cur)>=holes[cur][1]?`<button class="addshot" id="addshot">＋ 追加でクラブを選ぶ（${arr.length+1}打目）</button>`:"";$("records").innerHTML=content+addButton;document.querySelectorAll("[data-shot]").forEach(b=>b.onclick=()=>{let i=+b.dataset.shot;arr[i].club=b.dataset.club;save();render()});document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>{arr.splice(+b.dataset.delete,1);if(arr.length<5)while(arr.length<5)arr.push({club:""});save();render()});const add=$("addshot");if(add)add.onclick=()=>{arr.push({club:""});save();render()}}
-function renderReview(){let out='<tr><th>H</th><th>スコア</th><th>実際に使ったクラブ</th></tr>';holes.forEach((h,i)=>{let rows=logs[i];if(rows.some(r=>r.club))out+=`<tr><td>${i+1}（${h[0]}y）</td><td>${score(i)}（${scoreLabel(i)}）</td><td>${rows.filter(r=>r.club).map(r=>r.club).join(" / ")}</td></tr>`});$("review").innerHTML=out;$("feedback").textContent="各ホールで実際に使ったクラブを振り返れます。"}
+function renderReview(){
+ const completed=logs.filter((r,i)=>r.some(x=>x.club)).length;
+ const total=logs.reduce((n,r)=>n+r.filter(x=>x.club).length,0);
+ const parTotal=holes.reduce((n,h)=>n+h[1],0);
+ const playedPar=logs.reduce((n,r,i)=>n+(r.some(x=>x.club)?holes[i][1]:0),0);
+ $("totals").innerHTML=`<div class="stat"><small>記録ホール</small><strong>${completed}/18</strong></div><div class="stat"><small>現在の打数合計</small><strong>${total}</strong></div><div class="stat"><small>記録済みホールのPar比</small><strong>${total?((total-playedPar)>0?"+":"")+(total-playedPar):"—"}</strong></div>`;
+ $("savehint").textContent=completed===18?"18ホールすべてに記録があります。『データを保存』からJSONファイルとして端末に保存できます。":"18番ホールまで記録すると、保存用データの書き出しができます。ブラウザ内にも自動保存されます。";
+ let out='<tr><th>H</th><th>スコア</th><th>実際に使ったクラブ</th></tr>';holes.forEach((h,i)=>{let rows=logs[i];if(rows.some(r=>r.club))out+=`<tr><td>${i+1}（${h[0]}y）</td><td>${score(i)}（${scoreLabel(i)}）</td><td>${rows.filter(r=>r.club).map(r=>r.club).join(" / ")}</td></tr>`});$("review").innerHTML=out;$("feedback").textContent="各ホールで実際に使ったクラブを振り返れます。"}
 $("prev").onclick=()=>{cur=Math.max(0,cur-1);render()};$("next").onclick=()=>{cur=Math.min(17,cur+1);render()};
-$("export").onclick=()=>{let lines=["ゴルフクラブ記録"];holes.forEach((h,i)=>{if(logs[i].length){lines.push(`${i+1}番 Par${h[1]} ${h[0]}y`);logs[i].forEach((r,j)=>{if(r.club)lines.push(`${j+1}打目: ${r.club}`)})}});let text=lines.join("\n");if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(()=>alert("記録をコピーしたよ。メモなどに貼り付けてね。")).catch(()=>prompt("この記録をコピーしてね",text));else prompt("この記録をコピーしてね",text)};
+$("export").onclick=()=>{let lines=["ゴルフクラブ記録"];holes.forEach((h,i)=>{if(logs[i].some(r=>r.club)){lines.push(`${i+1}番 Par${h[1]} ${h[0]}y`);logs[i].forEach((r,j)=>{if(r.club)lines.push(`${j+1}打目: ${r.club}`)})}});let text=lines.join("\n");if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(()=>alert("記録をコピーしたよ。メモなどに貼り付けてね。")).catch(()=>prompt("この記録をコピーしてね",text));else prompt("この記録をコピーしてね",text)};
+$("savefile").onclick=()=>{
+ const payload={course:"泉南カンツリークラブ（コース名は要確認）",savedAt:new Date().toISOString(),logs:logs,holes:holes.map((h,i)=>({hole:i+1,yards:h[0],par:h[1],strokes:score(i),scoreLabel:scoreLabel(i),clubs:logs[i].filter(r=>r.club).map(r=>r.club)}))};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="golf-score-data.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+ $("savehint").textContent="保存ファイルを作成しました。ダウンロード先を確認してください。";
+};
+$("loadfile").onclick=()=>$("fileinput").click();
+$("fileinput").onchange=async e=>{
+ const file=e.target.files&&e.target.files[0]; if(!file)return;
+ try{
+   const data=JSON.parse(await file.text());
+   let imported=null;
+   if(Array.isArray(data)) imported=data;
+   else if(Array.isArray(data.logs)) imported=data.logs;
+   else if(Array.isArray(data.holes)) imported=data.holes.map(h=>Array.isArray(h)?h:(Array.isArray(h.clubs)?h.clubs.map(club=>({club})):[]));
+   if(!imported) throw new Error("format");
+   logs=Array.from({length:18},(_,i)=>{
+     const row=Array.isArray(imported[i])?imported[i]:[];
+     return Array.from({length:Math.max(5,row.length)},(_,j)=>{
+       const item=row[j];
+       if(typeof item==="string") return {club:names.includes(item)?item:""};
+       return {club:item&&names.includes(item.club)?item.club:""};
+     });
+   });
+   save();render();$("savehint").textContent="保存データを読み込みました。18ホールの記録を確認してください。";
+ }catch(err){alert("このJSONファイルは読み込めませんでした。ゴルフ攻略メモから保存したJSONファイルを選んでください。");}
+ e.target.value="";
+};
 $("reset").onclick=()=>{if(confirm("全ホールのクラブ記録を削除しますか？")){logs=Array.from({length:18},()=>[]);save();render()}};
 load();render();
 </script></body></html>
