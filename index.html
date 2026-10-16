@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#123d2a"><title>ゴルフ攻略メモ - 泉南カンツリークラブ</title>
+<style>
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;} body{min-width:0;overflow-wrap:break-word} button,select,input{font:inherit;touch-action:manipulation} button{-webkit-appearance:none;appearance:none;cursor:pointer} main{width:100%;min-width:0} .card{min-width:0} .holes,.summary,.clubgrid{min-width:0}
+:root{--g:#123d2a;--g2:#246b4a;--bg:#f5f4ed;--ink:#17231d;--muted:#657168;--line:#dbe2dc;--gold:#f1c75b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif}header{background:var(--g);color:#fff;padding:18px 16px;border-radius:0 0 20px 20px}h1{font-size:20px;margin:0 0 5px}.sub{font-size:12px;line-height:1.5;opacity:.9}main{max-width:760px;margin:auto;padding:7px}.card{background:white;border-radius:12px;padding:10px;margin-bottom:8px;box-shadow:0 2px 10px #0000000a}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.stat{background:#f2f6f1;padding:10px;border-radius:11px}.stat small{font-size:11px;color:var(--muted);display:block}.stat strong{font-size:19px}.holes{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;margin:6px 0}.hole{border:1px solid var(--line);background:#fff;border-radius:8px;padding:5px 0 4px;font-weight:800;display:flex;flex-direction:column;align-items:center;gap:2px}.hole small{font-size:10px;font-weight:700;line-height:1.1}.addshot{border:1px dashed var(--g2);background:#edf5ef;color:var(--g);border-radius:9px;padding:10px;font-weight:800;width:100%;margin-top:8px}.hole.active{background:var(--g2);color:#fff}.hole.logged{box-shadow:inset 0 -4px var(--gold)}.top{display:flex;align-items:center;justify-content:space-between;gap:10px}.top h2{font-size:20px;margin:0}.pill{background:#e6f0e9;color:var(--g);padding:5px 9px;border-radius:20px;font-size:12px;font-weight:800;white-space:nowrap}.yard{font-size:12px;color:var(--muted);margin:5px 0 12px}.lead{background:#edf5ef;border-left:4px solid var(--g2);padding:11px;border-radius:8px;font-size:13px;line-height:1.6}.section{font-size:11px;font-weight:800;color:var(--muted);letter-spacing:.04em;margin:13px 0 7px}.planrow{display:grid;grid-template-columns:30px 1fr;gap:8px;padding:9px 0;border-bottom:1px solid #edf0ec}.planrow:last-child{border-bottom:0}.num{width:27px;height:27px;background:var(--g);color:white;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:12px}.planrow b{font-size:13px}.planrow p{margin:3px 0 0;color:#526057;font-size:12px;line-height:1.5}.record{background:#f7f8f5;border:1px solid #e4e9e3;padding:11px;border-radius:12px;margin-top:9px}.recordhead{display:flex;justify-content:space-between;align-items:center;gap:8px}.recordhead b{font-size:13px}.tag{font-size:11px;background:#e7ece7;border-radius:20px;padding:4px 7px;color:#46554a}.clubs{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.club{border:1px solid #d5ddd6;background:white;border-radius:9px;padding:8px 10px;font-size:12px;font-weight:750;color:var(--ink)}.club.selected{background:var(--g2);border-color:var(--g2);color:white}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.field label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}.field select,.field input{width:100%;border:1px solid var(--line);border-radius:9px;padding:10px;background:white;font-size:14px}.btnrow{display:flex;gap:8px;margin-top:11px}.btn{flex:1;border:0;border-radius:10px;padding:12px 9px;font-weight:800;background:var(--g);color:white;font-size:13px}.btn.alt{background:#e5ebe6;color:var(--g)}.btn.warn{background:#f4e8e5;color:#8d3930}.clubgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.dist{background:#f2f5f1;border-radius:9px;padding:9px 4px;text-align:center}.dist b{display:block;font-size:13px}.dist span{font-size:11px;color:var(--muted)}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}th,td{border-bottom:1px solid #e6ebe6;padding:8px 6px;text-align:left;white-space:nowrap}th{color:var(--muted)}.note{font-size:11px;line-height:1.6;color:var(--muted)}footer{text-align:center;color:var(--muted);font-size:11px;padding:16px}
+.clubsettings{border:1px solid var(--line);border-radius:10px;padding:10px;margin-top:8px;background:#fbfcfa}
+.settingshead{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.settingshead b{font-size:14px}
+.clubchecks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:10px 0}
+.clubcheck{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:8px;padding:8px 6px;font-size:12px;font-weight:700;min-width:0}
+.clubcheck input{width:16px;height:16px;flex:0 0 auto;accent-color:var(--g2)}
+.distancefields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.distancefield{display:grid;grid-template-columns:44px minmax(0,1fr);align-items:center;gap:6px;background:#f2f5f1;border-radius:8px;padding:7px}
+.distancefield label{font-size:12px;font-weight:800}
+.distancefield input{width:100%;min-width:0;border:1px solid var(--line);border-radius:7px;padding:8px;background:#fff;font-size:14px}
+.settingsstatus{font-size:12px;color:var(--muted);margin:6px 0}
+@media (max-width:600px){
+  main{padding:8px 10px;padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+  .card{padding:10px;margin-bottom:10px;border-radius:12px}
+  .holes{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}
+  .hole{min-height:49px;padding:6px 1px;font-size:14px}
+  .hole small{font-size:10px;white-space:normal;text-align:center;line-height:1.15}
+  .top h2{font-size:19px}
+  .planrow{grid-template-columns:27px minmax(0,1fr);gap:7px}
+  .planrow p{font-size:13px;line-height:1.55;overflow-wrap:anywhere}
+  .record{padding:9px;margin-top:8px}
+  .clubs{gap:6px}
+  .club{min-height:40px;padding:9px 10px;font-size:13px}
+  .addshot,.btn{min-height:44px;font-size:13px}
+  .btnrow{gap:6px}
+  .yard{font-size:13px}
+  .lead{font-size:13px;overflow-wrap:anywhere}
+  .tablewrap{max-width:100%;-webkit-overflow-scrolling:touch}
+  table{font-size:12px}
+}
+@media (max-width:360px){
+  .two{grid-template-columns:1fr}
+  .btnrow{flex-direction:column}
+  .summary{grid-template-columns:1fr 1fr}
+}
+</style></head><body>
+<header>
+  <h1>泉南カンツリークラブ</h1>
+  <div class="sub">ゴルフ攻略メモ（レギュラーティー）</div>
+</header>
+<main>
+<div class="card" id="clubSettingsCard">
+  <div class="top"><h2>クラブ設定・飛距離</h2><span class="pill" id="clubCount">パター必須</span></div>
+  <p class="note">使うクラブを選び、各クラブの飛距離をヤードで入力してください。パターは必須、パター以外は13本まで選べます。</p>
+  <div id="clubSettingsPanel">
+    <div class="section">クラブを選択（パター以外 最大13本）</div>
+    <div class="clubchecks" id="clubChecks"></div>
+    <div class="section">飛距離（yd）</div>
+    <div class="distancefields" id="distanceFields"></div>
+    <div class="settingsstatus" id="settingsStatus">クラブを選択して飛距離を入力してください。</div>
+    <div class="btnrow"><button class="btn" id="saveClubSettings">クラブ設定を保存</button></div>
+  </div>
+  <div id="clubSettingsClosed" hidden>
+    <p class="note" id="savedClubSummary"></p>
+    <button class="btn alt" id="editClubSettings">クラブ設定を変更</button>
+  </div>
+</div>
+<p class="note">クラブ記録はこの端末のブラウザ内に保存します。</p>
+<div class="card"><div class="section">ホールを選ぶ（黄色ライン＝記録あり）</div><div class="holes" id="holes"></div><div class="top"><h2 id="title">1番ホール</h2><span class="pill" id="par">Par 4</span></div><div class="yard" id="yard"></div><div class="lead" id="lead"></div><div class="section">おすすめ攻略プラン（50y残し設計）</div><div id="plan"></div><div class="section">実際に使ったクラブを記録</div><div id="records"></div><div class="btnrow"><button class="btn alt" id="prev">← 前のホール</button><button class="btn" id="next">次のホール →</button></div></div>
+<div class="card"><div class="section">現在のスコア</div><div class="summary" id="totals"></div><div class="section">記録一覧</div><div class="tablewrap"><table id="review"></table></div><div class="btnrow"><button class="btn alt" id="export">記録をコピー</button><button class="btn" id="savefile">データを保存</button><button class="btn alt" id="loadfile">保存データを読み込む</button><input id="fileinput" type="file" accept=".json,application/json" hidden><button class="btn warn" id="reset">記録をリセット</button></div><p class="note" id="feedback">各ホールで使ったクラブを記録できます。</p><p class="note" id="savehint"></p></div>
+</main><footer>泉南カンツリークラブ 攻略メモ</footer>
+<script>
+const holes=[
+[369,4,"1番：やや打ちおろしのスタートホール。方向優先で安全に。",["ドライバー","4U","48°"]],
+[343,4,"2番：距離は標準的。正確なティーショットがカギ。",["ドライバー","5U","PW"]],
+[116,3,"3番：ガードバンカーに注意のショートホール。",["9I","PW"]],
+[408,4,"4番：豪快に狙えるロング（またはミドル）ホール、無理せず刻む。",["ドライバー","4U","48°"]],
+[170,3,"5番：距離感の把握が重要なショートホール。",["4U","56°"]],
+[360,4,"6番：フェアウェイの絞られたミドルホール。",["ドライバー","4U","5U","PW"]],
+[526,5,"7番：長めのロングホール。1打ごとに安全な場所へ。",["ドライバー","5U","PW"]],
+[321,4,"8番：難易度を高めに感じるミドルホール。正確性重視。",["ドライバー","4U","5U","PW"]],
+[510,5,"9番：前半をしめくくるロングホール。",["ドライバー","5U","PW"]],
+[340,4,"10番：後半スタート。池やハザードに注意。",["ドライバー","5U","PW"]],
+[432,5,"11番：3打目を打ちやすい距離に残す。",["ドライバー","4U","52°","PW"]],
+[266,4,"12番：距離は短いものの正確性を要求されるホール。",["ドライバー","5U","48°","52°"]],
+[316,4,"13番：2オンも狙えるチャンスホール。",["ドライバー","8I","PW"]],
+[140,3,"140yのショート。風の影響に注意。",["6U","7I","PW"]],
+[301,4,"短めのパー4。ティーショットを安全に置けばチャンス。",["ドライバー","PW","9I"]],
+[411,5,"パー5。2打目で無理せず残り距離を作る。",["ドライバー","4U","52°","PW"]],
+[179,3,"長めのパー3。グリーンの広い側へ。",["4U","56°"]],
+[344,4,"最終ホール。いつものテンポで丁寧に。",["ドライバー","5U","PW"]]
+];
+const clubOptions=[
+ ["1W",188],["3W",0],["5W",0],["3U",0],["5U",145],["6U",135],
+ ["5I",0],["6I",0],["7I",130],["8I",124],["9I",116],["PW",100],
+ ["48°",80],["50°",0],["52°",65],["56°",55],["60°",0]
+];
+const defaultSelected=["1W","5U","6U","7I","8I","9I","PW","48°","52°","56°"];
+let distances=defaultSelected.map(n=>{const c=clubOptions.find(x=>x[0]===n);return [n,c?c[1]:0]});
+let names=[...distances.map(x=>x[0]),"パター"];
+let clubConfig={selected:defaultSelected,distances:Object.fromEntries(clubOptions.map(([n,d])=>[n,d||""]))};
+let cur=0;let logs=Array.from({length:18},()=>Array.from({length:5},()=>({club:""})));
+const $=id=>document.getElementById(id);
+const CLUB_CONFIG_KEY="sennanClubConfig";
+function renderClubSettings(){
+ const checks=$("clubChecks"), fields=$("distanceFields");
+ checks.innerHTML=clubOptions.map(([n])=>`<label class="clubcheck"><input type="checkbox" data-config-club="${n}" ${clubConfig.selected.includes(n)?"checked":""}> <span>${n}</span></label>`).join("");
+ fields.innerHTML=clubOptions.filter(([n])=>clubConfig.selected.includes(n)).map(([n])=>`<div class="distancefield"><label for="dist-${n}">${n}</label><input id="dist-${n}" data-distance-club="${n}" type="number" min="1" max="400" inputmode="numeric" placeholder="yd" value="${clubConfig.distances[n]??""}"></div>`).join("");
+ $("clubCount").textContent=`${clubConfig.selected.length}/13本＋パター`;
+ checks.querySelectorAll("input").forEach(input=>input.addEventListener("change",()=>{
+   const chosen=[...checks.querySelectorAll("input:checked")].map(x=>x.dataset.configClub);
+   if(chosen.length>13){input.checked=false;$("settingsStatus").textContent="パター以外は13本までです。";return}
+   clubConfig.selected=chosen;
+   clubConfig.distances=Object.assign({},clubConfig.distances);
+   fields.innerHTML=clubOptions.filter(([n])=>clubConfig.selected.includes(n)).map(([n])=>`<div class="distancefield"><label for="dist-${n}">${n}</label><input id="dist-${n}" data-distance-club="${n}" type="number" min="1" max="400" inputmode="numeric" placeholder="yd" value="${clubConfig.distances[n]??""}"></div>`).join("");
+   $("clubCount").textContent=`${chosen.length}/13本＋パター`;
+   $("settingsStatus").textContent="選択したクラブの飛距離を入力してください。";
+ }));
+ fields.querySelectorAll("input").forEach(input=>input.addEventListener("input",()=>{clubConfig.distances[input.dataset.distanceClub]=input.value}));
+}
+function applyClubConfig(){
+ distances=clubConfig.selected.map(n=>[n,Number(clubConfig.distances[n])||0]).filter(x=>x[1]>0);
+ names=[...clubConfig.selected,"パター"];
+ $("clubSettingsPanel").hidden=true;
+ $("clubSettingsClosed").hidden=false;
+ $("savedClubSummary").textContent=`設定済み：${clubConfig.selected.join("・")}・パター。`;
+ render();
+}
+function saveClubConfig(){
+ const chosen=[...$("clubChecks").querySelectorAll("input:checked")].map(x=>x.dataset.configClub);
+ if(chosen.length>13){$("settingsStatus").textContent="パター以外は13本まで選んでください。";return}
+ clubConfig.selected=chosen;
+ $("distanceFields").querySelectorAll("input").forEach(input=>{clubConfig.distances[input.dataset.distanceClub]=input.value});
+ try{localStorage.setItem(CLUB_CONFIG_KEY,JSON.stringify(clubConfig))}catch(e){}
+ applyClubConfig();
+}
+function initClubSettings(){
+ try{const saved=localStorage.getItem(CLUB_CONFIG_KEY);if(saved){const parsed=JSON.parse(saved);if(Array.isArray(parsed.selected)&&parsed.distances&&parsed.selected.length<=13){clubConfig={selected:parsed.selected.filter(n=>clubOptions.some(c=>c[0]===n)),distances:Object.assign({},clubConfig.distances,parsed.distances)}}} }catch(e){}
+ renderClubSettings();
+ $("saveClubSettings").onclick=saveClubConfig;
+ $("editClubSettings").onclick=()=>{$("clubSettingsPanel").hidden=false;$("clubSettingsClosed").hidden=true;renderClubSettings()};
+}
+function load(){try{const d=localStorage.getItem("sennanClubLogs");if(d){const saved=JSON.parse(d);logs=Array.from({length:18},(_,i)=>{const a=Array.isArray(saved[i])?saved[i]:[];return Array.from({length:Math.max(5,a.length)},(_,j)=>a[j]||{club:""})})}}catch(e){}}
+function save(){try{localStorage.setItem("sennanClubLogs",JSON.stringify(logs))}catch(e){}}
+function planText(h,i){
+ const y=h[0],par=h[1],fmt=n=>Math.max(0,Math.round(n));
+ const usable=distances.filter(c=>c[1]>0);
+ const closest=(target,clubs=usable)=>[...clubs].sort((a,b)=>Math.abs(a[1]-target)-Math.abs(b[1]-target))[0];
+ const driver=usable.find(c=>c[0]==="1W")||closest(Math.min(y,200));
+ const arr=[];
+ if(par===3){
+   const c=closest(y);
+   if(c)arr.push([`1打目｜${c[0]}・${c[1]}yd目安`,`表示距離 ${y}yd。グリーン中央を狙う。`]);
+   arr.push(["アプローチ","グリーン周りからの寄せワンを狙う。"]);
+   arr.push(["パター","3パットを避ける。"]);
+ }else{
+   const targetToApproach = Math.max(0, y - 50);
+   const tee=driver?driver[1]:0;
+   if(tee>0){
+     arr.push([`目標設定`,`最終アプローチで「残り50y」を作るため、トータル約${fmt(targetToApproach)}yd前進させるマネジメントを行います。`]);
+     arr.push([`1打目｜${driver[0]}・${tee}yd目安`,`残り約${fmt(Math.max(0, y - tee))}yd。`]);
+     const remAfterTee = Math.max(0, y - tee);
+     if (remAfterTee > 50) {
+       const midRem = remAfterTee - 50;
+       const midClub = closest(midRem);
+       if (midClub) {
+         arr.push([`2打目以降｜${midClub[0]}（目安${midClub[1]}yd）`,`残り50yd地点へ運ぶためのクラブ選択。状況に合わせてコントロール。`]);
+       } else {
+         arr.push([`2打目以降`,`残り約${fmt(remAfterTee)}ydから50yd地点へ刻む。`]);
+       }
+     }
+   }
+   arr.push(["アプローチ（50y残し）｜ウェッジ類","残り50ydから得意のウェッジでピンをデッドに狙う。"]);
+   arr.push(["パター","距離感優先で3パットを防止。"]);
+ }
+ return arr;
+}
+function score(i){return logs[i].filter(r=>r.club).length}
+function scoreLabel(i){
+ const s=score(i);
+ if(s===0)return "—";
+ const diff=s-holes[i][1];
+ if(diff===0)return "Par (±0)";
+ if(diff===-1)return "Birdie (-1)";
+ if(diff===-2)return "Eagle (-2)";
+ if(diff>0)return `+${diff}打 (${diff > 0 ? '+' + diff : diff})`;
+ return `${diff}打`;
+}
+function render(){let h=holes[cur];$("title").textContent=(cur+1)+"番ホール";$("par").textContent="Par "+h[1];$("yard").textContent=h[0]+"ヤード";$("lead").textContent=h[2];$("plan").innerHTML=planText(h,cur).map((x,i)=>`<div class="planrow"><div class="num">${i+1}</div><div><b>${x[0]}</b><p>${x[1]}</p></div></div>`).join("");$("holes").innerHTML=holes.map((x,i)=>`<button class="hole ${i===cur?'active':''} ${logs[i].some(r=>r.club)?'logged':''}" data-i="${i}"><span>${i+1}</span><small>${score(i)?score(i)+"打 ("+scoreLabel(i)+")":"Par "+x[1]}</small></button>`).join("");document.querySelectorAll(".hole").forEach(b=>b.onclick=()=>{cur=+b.dataset.i;render()});renderRecords();renderReview()}
+function renderRecords(){let arr=logs[cur];let content=arr.map((r,i)=>`<div class="record"><div class="recordhead"><b>${i+1}打目</b></div><div class="clubs">${names.map(n=>`<button class="club ${r.club===n?'selected':''}" data-shot="${i}" data-club="${n}">${n}</button>`).join("")}<button class="club" data-delete="${i}">削除</button></div></div>`).join("");const addButton=score(cur)>=holes[cur][1]?`<button class="addshot" id="addshot">＋ 追加でクラブを選ぶ</button>`:"";$("records").innerHTML=content+addButton;document.querySelectorAll("[data-shot]").forEach(b=>b.onclick=()=>{let i=+b.dataset.shot;arr[i].club=b.dataset.club;save();render()});document.querySelectorAll("[data-delete]").forEach(b=>b.onclick=()=>{arr.splice(+b.dataset.delete,1);if(arr.length<5)while(arr.length<5)arr.push({club:""});save();render()});const add=$("addshot");if(add)add.onclick=()=>{arr.push({club:""});save();render()}}
+function renderReview(){
+ const completed=logs.filter((r,i)=>r.some(x=>x.club)).length;
+ const total=logs.reduce((n,r)=>n+r.filter(x=>x.club).length,0);
+ const parTotal=holes.reduce((n,h)=>n+h[1],0);
+ const playedPar=logs.reduce((n,r,i)=>n+(r.some(x=>x.club)?holes[i][1]:0),0);
+ const diffTotal=total-playedPar;
+ const diffStr=total?(diffTotal>0?"+"+diffTotal:diffTotal===0?"±0":diffTotal):"—";
+ $("totals").innerHTML=`<div class="stat"><small>記録ホール</small><strong>${completed}/18</strong></div><div class="stat"><small>合計打数</small><strong>${total} (${diffStr})</strong></div><div class="stat"><small>状況</small><strong>${completed}H完了</strong></div>`;
+ let out='<tr><th>H</th><th>スコア</th><th>状態（対Par）</th><th>使用クラブ</th></tr>';
+ holes.forEach((h,i)=>{
+  let rows=logs[i];
+  if(rows.some(r=>r.club)){
+   out+=`<tr><td>${i+1}（${h[0]}y）</td><td>${score(i)}打</td><td><b>${scoreLabel(i)}</b></td><td>${rows.filter(r=>r.club).map(r=>r.club).join(" / ")}</td></tr>`;
+  }
+ });
+ $("review").innerHTML=out;
+}
+$("prev").onclick=()=>{cur=Math.max(0,cur-1);render()};$("next").onclick=()=>{cur=Math.min(17,cur+1);render()};
+$("savefile").onclick=()=>{
+ const payload={course:"泉南カンツリークラブ",savedAt:new Date().toISOString(),logs:logs};
+ const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json;charset=utf-8"});
+ const url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="sennan-cc-score-data.json";document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+};
+$("reset").onclick=()=>{if(confirm("全ホールのクラブ記録をリセットしますか？")){logs=Array.from({length:18},()=>[]);save();render()}};
+initClubSettings();load();
+try{const saved=localStorage.getItem(CLUB_CONFIG_KEY);if(saved){$("clubSettingsPanel").hidden=true;$("clubSettingsClosed").hidden=false;applyClubConfig()}else{renderClubSettings();render()}}catch(e){renderClubSettings();render()}
+</script></body></html>
